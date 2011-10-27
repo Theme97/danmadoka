@@ -47,11 +47,17 @@ class playerBullet(pygame.sprite.Sprite):
 		self.kill()
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, xpos, ypos, health, sprite, msUntilSpawn, LevelStart):
+	def __init__(self, PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite, msUntilSpawn, LevelStart):
 		pygame.sprite.Sprite.__init__(self, self.groups)
-		xpos = resX/640*xpos
-		ypos = resY/480*ypos
-		self.pos = (xpos, ypos)
+		PointA_x = resX/640*PointA_x
+		PointA_y = resY/480*PointA_y
+		PointB_x = resX/640*PointB_x
+		PointB_y = resY/480*PointB_y
+		self.PointA_x = PointA_x
+		self.PointA_y = PointA_y
+		self.PointB_x = PointB_x
+		self.PointB_y = PointB_y 
+		self.speed = speed/60
 		self.health = health
 		self.sprite = sprite
 		self.msUntilSpawn = msUntilSpawn
@@ -59,24 +65,34 @@ class Enemy(pygame.sprite.Sprite):
 	def update(self):
 		currentTime = pygame.time.get_ticks()
 		if currentTime >= self.LevelStart+self.msUntilSpawn:
-			activeEnemies(self.pos, self.health, self.sprite)
+			activeEnemies(self.PointA_x, self.PointA_y, self.PointB_x, self.PointB_y, self.speed, self.health, self.sprite)
 			self.kill()
 
 class activeEnemies(pygame.sprite.Sprite):
-	def __init__(self, pos, health, sprite):
+	def __init__(self, PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load(sprite)
 		self.image = self.image.convert()
 		self.image = scaleImage(self.image)
 		self.rect = self.image.get_rect()
-		self.rect.center = pos
+		self.PointA_x = PointA_x
+		self.PointA_y = PointA_y
+		self.PointB_x = PointB_x
+		self.PointB_y = PointB_y
+		self.speed = speed
 		self.health = health
+		self.t = 0
 	def update(self):
 		if pygame.sprite.spritecollideany(self, playerbullets):
 			playerBullet.hit(pygame.sprite.spritecollideany(self, playerbullets))
 			self.health -= bulletDamage
 			if self.health <= 0:
 				self.kill()
+		self.rect.right = self.PointA_x+self.t*(self.PointB_x-self.PointA_x)
+		self.rect.bottom = self.PointA_y+self.t*(self.PointB_y-self.PointA_y)	
+		self.t += self.speed
+		if self.t >= 1:
+			self.kill()
 
 def scaleImage(image):
 	width = image.get_width()
@@ -86,10 +102,10 @@ def scaleImage(image):
 
 def level1():
 	levelstart = pygame.time.get_ticks()
-	Enemy(300, 250, 30, "./enemy1.png", 0, levelstart)
-	Enemy(250, 100, 60, "./enemy1.png", 1000, levelstart)
-	Enemy(100, 100, 20, "./enemy1.png", 2000, levelstart)
-	Enemy(200, 150, 50, "./enemy1.png", 5000, levelstart)
+	# (PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite, msUntilSpawn, LevelStart)
+	Enemy(0, 300, 300, 0, 0.4, 30, "./enemy1.png", 3000, levelstart)
+	Enemy(0, 200, 500, 200, 0.1, 40, "./enemy1.png", 500, levelstart)
+	Enemy(500, 300, 0, 300, 0.1, 40, "./enemy1.png", 500, levelstart)
 
 pygame.init()
 
@@ -119,7 +135,7 @@ playerBulletSpeed = resY/60 # 8 @ 480
 msBetweenShots = 150
 regbulletDamage = 10
 focusbulletDamage = 20
-playerPosition = (resX/20+fieldwidth/2-resX/50, resY-(fieldheight/10+resY/30+resY/12)) # where player starts
+playerPosition = (fieldwidth/2+resX/20, 9*fieldheight/10+resY/30) # where player starts
 
 # Stuff #
 clock = pygame.time.Clock()
@@ -142,6 +158,11 @@ enemies = pygame.sprite.Group()
 activeEnemies.groups = enemies
 
 field = pygame.Rect(resX/20, resY/30, fieldwidth, fieldheight)
+marginleft = pygame.Rect(0, 0, resX/20, resY)
+marginright = pygame.Rect(fieldwidth+resX/20, 0, resX-(fieldwidth+resX/20), resY)
+margintop = pygame.Rect(resX/20, 0, fieldwidth, resY/30)
+marginbottom = pygame.Rect(resX/20, resY/30+fieldheight, fieldwidth, resY/30)
+
 player(playerPosition)
 
 level1()
@@ -167,7 +188,6 @@ while True:
 		if currentTime > lastBullet+msBetweenShots:
 			playerBullet(playerPosition)
 
-	window.fill((0, 0, 0))
 	pygame.draw.rect(window, (255, 255, 255), field)
 
 	playergroup.update()
@@ -177,6 +197,12 @@ while True:
 	playerbullets.draw(window)
 	enemies.draw(window)
 	playergroup.draw(window)
+
+	# try to optimize. pygame.transform.chop? #
+	pygame.draw.rect(window, (0, 0, 0), marginleft)
+	pygame.draw.rect(window, (0, 0, 0), marginright)
+	pygame.draw.rect(window, (0, 0, 0), margintop)
+	pygame.draw.rect(window, (0, 0, 0), marginbottom)
 
 	pygame.display.update()
 	clock.tick(60)
