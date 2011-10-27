@@ -6,6 +6,7 @@ class player(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load('./homura.png')
 		self.image = self.image.convert()
+		self.image = scaleImage(self.image)
 		self.rect = self.image.get_rect()
 		self.rect.center = pos
 	def update(self):
@@ -32,6 +33,7 @@ class playerBullet(pygame.sprite.Sprite):
 	def __init__(self, pos):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load('./hom-bulleta.png')
+		self.image = scaleImage(self.image)
 		self.image = self.image.convert()
 		self.rect = self.image.get_rect()
 		self.rect.center = pos
@@ -45,9 +47,11 @@ class playerBullet(pygame.sprite.Sprite):
 		self.kill()
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, pos, health, sprite, msUntilSpawn, LevelStart):
+	def __init__(self, xpos, ypos, health, sprite, msUntilSpawn, LevelStart):
 		pygame.sprite.Sprite.__init__(self, self.groups)
-		self.pos = pos
+		xpos = resX/640*xpos
+		ypos = resY/480*ypos
+		self.pos = (xpos, ypos)
 		self.health = health
 		self.sprite = sprite
 		self.msUntilSpawn = msUntilSpawn
@@ -63,6 +67,7 @@ class activeEnemies(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load(sprite)
 		self.image = self.image.convert()
+		self.image = scaleImage(self.image)
 		self.rect = self.image.get_rect()
 		self.rect.center = pos
 		self.health = health
@@ -73,12 +78,18 @@ class activeEnemies(pygame.sprite.Sprite):
 			if self.health <= 0:
 				self.kill()
 
+def scaleImage(image):
+	width = image.get_width()
+	height = image.get_height()
+	scaledimage = pygame.transform.scale(image, (resX/640*width, resY/480*height))
+	return scaledimage
+
 def level1():
 	levelstart = pygame.time.get_ticks()
-	Enemy((300,250), 30, "./enemy1.png", 0, levelstart)
-	Enemy((250, 100), 60, "./enemy1.png", 1000, levelstart)
-	Enemy((100,100), 20, "./enemy1.png", 2000, levelstart)
-	Enemy((200,150), 50, "./enemy1.png", 5000, levelstart)
+	Enemy(300, 250, 30, "./enemy1.png", 0, levelstart)
+	Enemy(250, 100, 60, "./enemy1.png", 1000, levelstart)
+	Enemy(100, 100, 20, "./enemy1.png", 2000, levelstart)
+	Enemy(200, 150, 50, "./enemy1.png", 5000, levelstart)
 
 pygame.init()
 
