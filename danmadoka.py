@@ -47,38 +47,47 @@ class playerBullet(pygame.sprite.Sprite):
 		self.kill()
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite, msUntilSpawn, LevelStart):
+	def __init__(self, X_coords, Y_coords, speed, health, sprite, msUntilSpawn, LevelStart):
 		pygame.sprite.Sprite.__init__(self, self.groups)
-		PointA_x = resX/640*PointA_x
-		PointA_y = resY/480*PointA_y
-		PointB_x = resX/640*PointB_x
-		PointB_y = resY/480*PointB_y
-		self.PointA_x = PointA_x
-		self.PointA_y = PointA_y
-		self.PointB_x = PointB_x
-		self.PointB_y = PointB_y 
-		self.speed = speed/60
-		self.health = health
-		self.sprite = sprite
-		self.msUntilSpawn = msUntilSpawn
-		self.LevelStart = LevelStart
+		if len(X_coords) != len(Y_coords):
+			print ("Enemy was given a different amount of X and Y co-ordinates")
+			self.kill()
+		elif len(X_coords) <= 1:
+			print ("Enemy must be given at least two pairs of co-ordinates.")
+			self.kill()
+		else:
+			for (i, X) in enumerate(X_coords):
+				X = resX/640*X
+				X_coords[i] = X
+			for (i, Y) in enumerate(Y_coords):
+				Y = resY/480*Y
+				Y_coords[i] = Y
+			self.X_coords = X_coords
+			self.Y_coords = Y_coords 
+			self.speed = speed/60
+			self.health = health
+			self.sprite = sprite
+			self.msUntilSpawn = msUntilSpawn
+			self.LevelStart = LevelStart
 	def update(self):
 		currentTime = pygame.time.get_ticks()
 		if currentTime >= self.LevelStart+self.msUntilSpawn:
-			activeEnemies(self.PointA_x, self.PointA_y, self.PointB_x, self.PointB_y, self.speed, self.health, self.sprite)
+			activeEnemies(self.X_coords, self.Y_coords, self.speed, self.health, self.sprite)
 			self.kill()
 
 class activeEnemies(pygame.sprite.Sprite):
-	def __init__(self, PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite):
+	def __init__(self, X_coords, Y_coords, speed, health, sprite):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load(sprite)
 		self.image = self.image.convert()
 		self.image = scaleImage(self.image)
 		self.rect = self.image.get_rect()
-		self.PointA_x = PointA_x
-		self.PointA_y = PointA_y
-		self.PointB_x = PointB_x
-		self.PointB_y = PointB_y
+		# improve this! ###########
+		self.PointA_x = X_coords[0]
+		self.PointA_y = Y_coords[0]
+		self.PointB_x = X_coords[1]
+		self.PointB_y = Y_coords[1]
+		###########################
 		self.speed = speed
 		self.health = health
 		self.t = 0
@@ -102,10 +111,10 @@ def scaleImage(image):
 
 def level1():
 	levelstart = pygame.time.get_ticks()
-	# (PointA_x, PointA_y, PointB_x, PointB_y, speed, health, sprite, msUntilSpawn, LevelStart)
-	Enemy(0, 300, 300, 0, 0.4, 30, "./enemy1.png", 3000, levelstart)
-	Enemy(0, 200, 500, 200, 0.1, 40, "./enemy1.png", 500, levelstart)
-	Enemy(500, 300, 0, 300, 0.1, 40, "./enemy1.png", 500, levelstart)
+	# ([PointA_x, PointB_x, etc.], [PointA_y, PointB_y, etc.] speed, health, sprite, msUntilSpawn, LevelStart)
+	Enemy([0, 300], [300, 0], 0.4, 30, "./enemy1.png", 3000, levelstart)
+	Enemy([0, 500], [200, 200], 0.1, 40, "./enemy1.png", 500, levelstart)
+	Enemy([500, 0], [300, 300], 0.1, 40, "./enemy1.png", 500, levelstart)
 
 pygame.init()
 
