@@ -12,22 +12,22 @@ class player(pygame.sprite.Sprite):
 	def update(self):
 		if keys[keyUp]:
 			self.rect.top -= playerYspeed
-			if self.rect.top < resY/30:
-				self.rect.top = resY/30
+			if self.rect.top < marginleft:
+				self.rect.top = marginleft
 		if keys[keyDown]:
 			self.rect.bottom += playerYspeed
-			if self.rect.bottom > resY-resY/30:
-				self.rect.bottom = resY-resY/30
+			if self.rect.bottom > resY-marginleft:
+				self.rect.bottom = resY-marginleft
 		if keys[keyLeft]:
 			self.rect.left -= playerXspeed
-			if self.rect.left < resX/20:
-				self.rect.left = resX/20
+			if self.rect.left < margintop:
+				self.rect.left = margintop
 		if keys[keyRight]:
 			self.rect.right += playerXspeed
-			if self.rect.right > resX/20+fieldwidth:
-				self.rect.right = resX/20+fieldwidth
-		global playerPosition
-		playerPosition = self.rect.center
+			if self.rect.right > margintop+fieldwidth:
+				self.rect.right = margintop+fieldwidth
+	def getpos(self):
+		return self.rect.center
 
 class playerBullet(pygame.sprite.Sprite):
 	def __init__(self, pos):
@@ -41,7 +41,7 @@ class playerBullet(pygame.sprite.Sprite):
 		lastBullet = pygame.time.get_ticks()
 	def update(self):
 		self.rect.top -= playerBulletSpeed
-		if self.rect.bottom < resY/30:
+		if self.rect.bottom < marginleft:
 			self.kill()		
 	def hit(self):
 		self.kill()
@@ -121,8 +121,10 @@ keyBomb = K_x # this will do something one day I promise
 keyFocus = K_LSHIFT
 
 # Size #
+margintop = resX/20
+marginleft = resY/30
 fieldwidth = 3*resX/5 # 384 @ 640
-fieldheight = resY-2*resY/30 # 448 @ 480
+fieldheight = resY-2*marginleft # 448 @ 480
 
 # Speed #
 regXspeed = resX/160 # 4 @ 640
@@ -135,7 +137,7 @@ playerBulletSpeed = resY/60 # 8 @ 480
 msBetweenShots = 150
 regbulletDamage = 10
 focusbulletDamage = 20
-playerPosition = (fieldwidth/2+resX/20, 9*fieldheight/10+resY/30) # where player starts
+playerPosition = (fieldwidth/2+margintop, 9*fieldheight/10+marginleft) # where player starts
 
 # Stuff #
 clock = pygame.time.Clock()
@@ -157,13 +159,13 @@ Enemy.groups = inactiveEnemies
 enemies = pygame.sprite.Group()
 activeEnemies.groups = enemies
 
-field = pygame.Rect(resX/20, resY/30, fieldwidth, fieldheight)
-marginleft = pygame.Rect(0, 0, resX/20, resY)
-marginright = pygame.Rect(fieldwidth+resX/20, 0, resX-(fieldwidth+resX/20), resY)
-margintop = pygame.Rect(resX/20, 0, fieldwidth, resY/30)
-marginbottom = pygame.Rect(resX/20, resY/30+fieldheight, fieldwidth, resY/30)
+field = pygame.Rect(margintop, marginleft, fieldwidth, fieldheight)
+marginleftRect = pygame.Rect(0, 0, margintop, resY)
+marginrightRect = pygame.Rect(fieldwidth+margintop, 0, resX-(fieldwidth+margintop), resY)
+margintopRect = pygame.Rect(margintop, 0, fieldwidth, marginleft)
+marginbottomRect = pygame.Rect(margintop, marginleft+fieldheight, fieldwidth, marginleft)
 
-player(playerPosition)
+player1 = player(playerPosition)
 
 level1()
 
@@ -186,7 +188,7 @@ while True:
 	if keys[keyShoot]:
 		currentTime = pygame.time.get_ticks()
 		if currentTime > lastBullet+msBetweenShots:
-			playerBullet(playerPosition)
+			playerBullet(player1.getpos())
 
 	pygame.draw.rect(window, (255, 255, 255), field)
 
@@ -199,10 +201,10 @@ while True:
 	playergroup.draw(window)
 
 	# try to optimize. pygame.transform.chop? #
-	pygame.draw.rect(window, (0, 0, 0), marginleft)
-	pygame.draw.rect(window, (0, 0, 0), marginright)
-	pygame.draw.rect(window, (0, 0, 0), margintop)
-	pygame.draw.rect(window, (0, 0, 0), marginbottom)
+	pygame.draw.rect(window, (0, 0, 0), marginleftRect)
+	pygame.draw.rect(window, (0, 0, 0), marginrightRect)
+	pygame.draw.rect(window, (0, 0, 0), margintopRect)
+	pygame.draw.rect(window, (0, 0, 0), marginbottomRect)
 
 	pygame.display.update()
 	clock.tick(60)
