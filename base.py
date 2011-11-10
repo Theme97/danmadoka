@@ -7,9 +7,9 @@ class bullet(pygame.sprite.Sprite):
 	def __init__(self, game, image):
 		# setup
 		super(bullet, self).__init__()
-		self._game  = game
 		self._image = image
 		self._delayed = 0
+		self.game  = game
 		self.image = image
 		
 		# defaults
@@ -45,7 +45,7 @@ class bullet(pygame.sprite.Sprite):
 			self.rect.move_ip(-math.cos(ang) * self.speed, -math.sin(ang) * self.speed)
 			
 			# check clip
-			if not self._game.area.bulletClip.collidepoint(self.rect.center):
+			if not self.game.area.bulletClip.collidepoint(self.rect.center):
 				return self.kill()
 			
 			# rotate image
