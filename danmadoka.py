@@ -26,8 +26,10 @@ class player(pygame.sprite.Sprite):
 			self.rect.right += playerXspeed[keys[keyFocus]]
 			if self.rect.right > margintop+fieldwidth:
 				self.rect.right = margintop+fieldwidth
-	def getpos(self):
-		return self.rect.center
+		if keys[keyShoot]:
+			currentTime = pygame.time.get_ticks()
+			if currentTime > lastBullet+msBetweenShots:
+				playerBullet(self.rect.center, bulletDamage[keys[keyFocus]])
 
 class playerBullet(pygame.sprite.Sprite):
 	def __init__(self, pos, damage):
@@ -189,10 +191,6 @@ while True:
 			sys.exit()	
 		if event.type == KEYDOWN or event.type == KEYUP:
 			keys = pygame.key.get_pressed()
-	if keys[keyShoot]:
-		currentTime = pygame.time.get_ticks()
-		if currentTime > lastBullet+msBetweenShots:
-			playerBullet(player1.getpos(), bulletDamage[keys[keyFocus]])
 
 	pygame.draw.rect(window, (255, 255, 255), field)
 
