@@ -48,3 +48,5 @@ class bezier(base):
 			return lerp.calc(p[0], p[1], t)
 		elif size == 1:
 			return p[0]
+		elif size == 0:
+			return (0, 0)
