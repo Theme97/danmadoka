@@ -27,6 +27,10 @@ class bullet(pygame.sprite.Sprite):
 		self.frame = 0
 		self.radius = 0
 	
+	def hit(self, victim):
+		self.kill()
+		return self.dmg
+	
 	def update(self):
 		if not self.Init: return
 		
@@ -66,12 +70,24 @@ class enemy(pygame.sprite.Sprite):
 		self.setPos(pos)
 		
 		self.health = health
+		self.invuln = False
 		self.motion = None
 	
 	def update(self):
-		if self.motion:
-			pos = self.motion.tick()
-			self.setPos(pos)
+		if self.motion: self.rect.center = self.motion.tick()
+		
+		if self.invuln > 0:
+			if self.invuln is not True: self.invuln -= 1
+		else:
+			self.checkCollision()
+	
+	def checkCollision(self):
+		bullets = pygame.sprite.spritecollide(self, self.game.area.playerBullets, False)
+		for bullet in bullets:
+			self.health -= bullet.hit(self)
+			if self.health < 1:
+				self.kill()
+				break
 	
 	def getPos(self): return self.rect.center
 	def setPos(self, pos): self.rect.center = pos
