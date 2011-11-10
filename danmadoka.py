@@ -11,19 +11,19 @@ class player(pygame.sprite.Sprite):
 		self.rect.center = pos
 	def update(self):
 		if keys[keyUp]:
-			self.rect.top -= playerYspeed
+			self.rect.top -= playerYspeed[keys[keyFocus]]
 			if self.rect.top < marginleft:
 				self.rect.top = marginleft
 		if keys[keyDown]:
-			self.rect.bottom += playerYspeed
+			self.rect.bottom += playerYspeed[keys[keyFocus]]
 			if self.rect.bottom > resY-marginleft:
 				self.rect.bottom = resY-marginleft
 		if keys[keyLeft]:
-			self.rect.left -= playerXspeed
+			self.rect.left -= playerXspeed[keys[keyFocus]]
 			if self.rect.left < margintop:
 				self.rect.left = margintop
 		if keys[keyRight]:
-			self.rect.right += playerXspeed
+			self.rect.right += playerXspeed[keys[keyFocus]]
 			if self.rect.right > margintop+fieldwidth:
 				self.rect.right = margintop+fieldwidth
 	def getpos(self):
@@ -146,9 +146,11 @@ playerBulletSpeed = resY/60 # 8 @ 480
 
 # Misc. #
 msBetweenShots = 150
-regbulletDamage = 10
-focusbulletDamage = 20
 playerPosition = (fieldwidth/2+margintop, 9*fieldheight/10+marginleft) # where player starts
+
+bulletDamage = [10, 20] # [unfocused damage, focused damage]
+playerXspeed = [regXspeed, focusXspeed]
+playerYspeed = [regYspeed, focusYspeed]
 
 # Stuff #
 clock = pygame.time.Clock()
@@ -187,19 +189,10 @@ while True:
 			sys.exit()	
 		if event.type == KEYDOWN or event.type == KEYUP:
 			keys = pygame.key.get_pressed()
-
-	bulletDamage = regbulletDamage
-	playerXspeed = regXspeed
-	playerYspeed = regYspeed
-
-	if keys[keyFocus]:
-		bulletDamage = focusbulletDamage
-		playerXspeed = focusXspeed
-		playerYspeed = focusYspeed
 	if keys[keyShoot]:
 		currentTime = pygame.time.get_ticks()
 		if currentTime > lastBullet+msBetweenShots:
-			playerBullet(player1.getpos(), bulletDamage)
+			playerBullet(player1.getpos(), bulletDamage[keys[keyFocus]])
 
 	pygame.draw.rect(window, (255, 255, 255), field)
 
