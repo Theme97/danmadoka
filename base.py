@@ -95,6 +95,13 @@ class enemy(pygame.sprite.Sprite):
 	def moveLinear(self, pos, frames): self.motion = motion.lerp(self.getPos(), pos, frames)
 	def moveLinear2(self, pos, frames, weight): self.motion = motion.bezier([self.getPos()] * weight + [pos] * weight, frames)
 
+#########
+# level #
+#########
+class level:
+	def __init__(self, game): self.game = game
+	def tick(self): pass
+
 ##########
 # player #
 ##########

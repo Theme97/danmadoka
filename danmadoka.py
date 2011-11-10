@@ -3,7 +3,7 @@
 # play area is 480x560 offset by 40x20
 
 import pygame, sys
-import players, base
+import base, players, levels
 
 ##########
 # System #
@@ -41,15 +41,8 @@ class Game:
 		area = self.area = PlayArea(self)
 		area.setPlayer(players.Homura)
 		
-		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveCatmullRom([(50, 400), (400, 400)], 300)
-		area.enemies.add(e)
-		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveBezier([(400, 50), (400, 400)], 300)
-		area.enemies.add(e)
-		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveLinear2((400, 400), 300, 4)
-		area.enemies.add(e)
+		level = self.level = levels.l1(area)
+		level.tick(0)
 	
 	def keyPressed(self, key): return self.keys[self.system.keys[key]]
 	
