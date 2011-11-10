@@ -3,9 +3,7 @@
 # play area is 480x560 offset by 40x20
 
 import pygame, sys
-import players
-
-from Enemy import *
+import players, base
 
 ########
 # Game #
@@ -24,15 +22,15 @@ class Game:
 		area = self.area = PlayArea(self)
 		area.setPlayer(players.Homura)
 		
-		enemy = Enemy(self, (50, 50), 100, './enemy1.png')
-		enemy.moveBezier([(50, 400), (400, 50), (400, 400)], 600)
-		area.enemies.add(enemy)
-		enemy = Enemy(self, (50, 50), 100, './enemy1.png')
-		enemy.moveBezier([(400, 50), (50, 400), (400, 400)], 600)
-		area.enemies.add(enemy)
-		enemy = Enemy(self, (50, 50), 100, './enemy1.png')
-		enemy.moveLinear2((400, 400), 600, 2)
-		area.enemies.add(enemy)
+		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
+		e.moveBezier([(50, 400), (400, 50), (400, 400)], 600)
+		area.enemies.add(e)
+		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
+		e.moveBezier([(400, 50), (50, 400), (400, 400)], 600)
+		area.enemies.add(e)
+		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
+		e.moveLinear2((400, 400), 600, 2)
+		area.enemies.add(e)
 	
 	def keyPressed(self, key): return self.keys[self.system.keys[key]]
 	
@@ -66,20 +64,30 @@ class PlayArea:
 		# private vars
 		self._game = game
 		
-		# init surfaces
+		# surfaces
 		self.rect = pygame.Rect(40, 20, 480, 560)
+		self.size = (self.rect.width, self.rect.height)
 		self.surface = game.window.subsurface(self.rect)
 		
-		# init groups
+		# groups
 		self.player = pygame.sprite.GroupSingle()
 		self.playerBullets = pygame.sprite.Group()
 		self.enemies = pygame.sprite.Group()
 		self.enemyBullets = pygame.sprite.Group()
 		
+		# options
+		self.bulletClip = self.setBulletClip((64, 64, 64, 64))
+		
 		# draw bg
 		pygame.display.flip()
 	
-	def setPlayer(self, player): self.player.add(player(self._game))
+	def setPlayer(self, player):
+		p = player(self._game)
+		p.setPos((self.size[0] * 0.5, self.size[1] * 0.9))
+		self.player.add(p)
+	
+	def setBulletClip(self, size):
+		self.bulletClip = pygame.Rect(-size[0], -size[1], self.size[0] + size[2], self.size[1] + size[3])
 	
 	def update(self):
 		# draw bg
