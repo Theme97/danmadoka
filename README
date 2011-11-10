@@ -1,0 +1,26 @@
+<base.bullet>
+
+Properties:
+	accel [num]       - linear acceleration (units per tick per tick)
+	angle [num]       - current angle (degrees)
+	angle_accel [num] - angular acceleration (degrees per tick per tick)
+	angle_vel [num]   - angular velocity (degrees per tick)
+	delay [num]       - time to fade in with no collision or movement (ticks)
+	dmg [num]         - amount of damage dealt upon hit
+	image [Surface]   - surface for bullet graphic; may be rotated
+	radius [num]      - radius to use in collision checks
+	rect [Rect]       - position and size of entire bullet
+	speed [num]       - linear velocity (units per tick)
+
+Methods:
+	__init__([Game] game, [Surface] image)
+		initializes properties
+		returns: None
+	
+	hit([Sprite] victim)
+		called when the bullet collides with something by default handlers
+		returns: int (damage to deal to victim)
+	
+	update()
+		does what it says
+		returns: None
