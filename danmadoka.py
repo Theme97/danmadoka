@@ -5,6 +5,23 @@
 import pygame, sys
 import players, base
 
+##########
+# System #
+##########
+class System:
+	def __init__(self):
+		# TODO: read from some config file
+		self.res = (640, 480)
+		self.keys = {
+			'left' : pygame.K_LEFT,
+			'up'   : pygame.K_UP,
+			'down' : pygame.K_DOWN,
+			'right': pygame.K_RIGHT,
+			'shoot': pygame.K_z,
+			'bomb' : pygame.K_x,
+			'focus': pygame.K_LSHIFT,
+		}
+
 ########
 # Game #
 ########
@@ -42,23 +59,6 @@ class Game:
 		scale(self.window, self._window.get_size(), self._window)
 		# TODO: TATE?
 		self.ticks += 1
-
-##########
-# System #
-##########
-class System:
-	def __init__(self):
-		# TODO: read from some config file
-		self.res = (640, 480)
-		self.keys = {
-			'left' : pygame.K_LEFT,
-			'up'   : pygame.K_UP,
-			'down' : pygame.K_DOWN,
-			'right': pygame.K_RIGHT,
-			'shoot': pygame.K_z,
-			'bomb' : pygame.K_x,
-			'focus': pygame.K_LSHIFT,
-		}
 
 ############
 # PlayArea #
