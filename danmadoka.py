@@ -30,13 +30,14 @@ class player(pygame.sprite.Sprite):
 		return self.rect.center
 
 class playerBullet(pygame.sprite.Sprite):
-	def __init__(self, pos):
+	def __init__(self, pos, damage):
 		pygame.sprite.Sprite.__init__(self, self.groups)
 		self.image = pygame.image.load('./hom-bulleta.png')
 		self.image = scaleImage(self.image)
 		self.image = self.image.convert()
 		self.rect = self.image.get_rect()
 		self.rect.center = pos
+		self.damage = damage
 		global lastBullet
 		lastBullet = pygame.time.get_ticks()
 	def update(self):
@@ -45,6 +46,7 @@ class playerBullet(pygame.sprite.Sprite):
 			self.kill()		
 	def hit(self):
 		self.kill()
+		return (self.damage)
 
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, X_coords, Y_coords, speed, health, sprite, msUntilSpawn, LevelStart):
@@ -93,8 +95,8 @@ class activeEnemies(pygame.sprite.Sprite):
 		self.t = 0
 	def update(self):
 		if pygame.sprite.spritecollideany(self, playerbullets):
-			playerBullet.hit(pygame.sprite.spritecollideany(self, playerbullets))
-			self.health -= bulletDamage
+			damage = playerBullet.hit(pygame.sprite.spritecollideany(self, playerbullets))
+			self.health -= damage
 			if self.health <= 0:
 				self.kill()
 		self.rect.right = self.PointA_x+self.t*(self.PointB_x-self.PointA_x)
@@ -197,7 +199,7 @@ while True:
 	if keys[keyShoot]:
 		currentTime = pygame.time.get_ticks()
 		if currentTime > lastBullet+msBetweenShots:
-			playerBullet(player1.getpos())
+			playerBullet(player1.getpos(), bulletDamage)
 
 	pygame.draw.rect(window, (255, 255, 255), field)
 
