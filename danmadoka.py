@@ -19,6 +19,8 @@ class Game:
 		self.keys   = pygame.key.get_pressed()
 		self.window = pygame.transform.scale(self._window, (800, 600))
 		
+		self.ticks = 0
+		
 		area = self.area = PlayArea(self)
 		area.setPlayer(players.Homura)
 		
@@ -29,7 +31,7 @@ class Game:
 		e.moveBezier([(400, 50), (50, 400), (400, 400)], 600)
 		area.enemies.add(e)
 		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveLinear2((400, 400), 600, 2)
+		e.moveLinear2((400, 400), 600, 4)
 		area.enemies.add(e)
 	
 	def keyPressed(self, key): return self.keys[self.system.keys[key]]
@@ -37,6 +39,7 @@ class Game:
 	def update(self):
 		self.area.update()
 		pygame.transform.scale(self.window, self._window.get_size(), self._window)
+		self.ticks += 1
 		# TODO: TATE?
 
 ##########
@@ -74,9 +77,10 @@ class PlayArea:
 		self.playerBullets = pygame.sprite.Group()
 		self.enemies = pygame.sprite.Group()
 		self.enemyBullets = pygame.sprite.Group()
+		self.enemyBulletQueue = pygame.sprite.Group()
 		
 		# options
-		self.bulletClip = self.setBulletClip((64, 64, 64, 64))
+		self.setBulletClip((64, 64, 64, 64))
 		
 		# draw bg
 		pygame.display.flip()
@@ -89,6 +93,10 @@ class PlayArea:
 	def setBulletClip(self, size):
 		self.bulletClip = pygame.Rect(-size[0], -size[1], self.size[0] + size[2], self.size[1] + size[3])
 	
+	def addPlayerBullet(self, bullet):
+		self.playerBullets.add(bullet)
+		bullet.Init = True
+	
 	def update(self):
 		# draw bg
 		self._game.window.fill((0, 0, 0)) # fill window bg (stage image goes here)
@@ -99,6 +107,7 @@ class PlayArea:
 		self.playerBullets.update()
 		self.enemies.update()
 		self.enemyBullets.update()
+		self.enemyBulletQueue.update()
 		
 		# draw groups
 		self.playerBullets.draw(self.surface)

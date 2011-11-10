@@ -1,48 +1,56 @@
-import pygame, motion
+import pygame, math, motion
 
 ##########
 # bullet #
 ##########
 class bullet(pygame.sprite.Sprite):
 	def __init__(self, game, image):
-		# super
-		super(base, self).__init__()
-		
-		self.game = game
-		self.image = pygame.image.load(image).convert()
-		self.rect = self.image.get_rect()
+		# setup
+		super(bullet, self).__init__()
+		self._game  = game
+		self._image = image
+		self.image = image
 		
 		# defaults
+		self.init = False
+		
+		self.rect = image.get_rect()
 		self.speed = 0
-		self.motion = None
-		self.radius = 1
+		self.accel = 0
+		
+		self.angle = 0
+		self.angle_vel = 0
+		self.angle_accel = 0
+		
+		self.dmg = 0
+		self.delay = 0
+		self.frame = 0
+		self.radius = 0
 	
 	def update(self):
-		# move (if applicable)
-		if isinstance(self.motion, motion.base):
-			self.setPos(self.motion.tick())
+		if not self.Init: return
 		
-		# check collisions
-		for enemy in pygame.sprite.spritecollide(self, self.game.area.enemies, False):
-			print enemy
-	
-	def move(self):
-		game = self.game
-		if game.keyPressed('left'):
-			self.rect.left -= self.getSpeed()
-			if self.rect.left < 0: self.rect.left = 0
-		if game.keyPressed('up'):
-			self.rect.top -= self.getSpeed()
-			if self.rect.top < 0: self.rect.top = 0
-		if game.keyPressed('right'):
-			self.rect.right += self.getSpeed()
-			if self.rect.right > 480: self.rect.right = 480
-		if game.keyPressed('down'):
-			self.rect.bottom += self.getSpeed()
-			if self.rect.bottom > 560: self.rect.bottom = 560
-	
-	def getPos(self): return self.rect.center
-	def getSpeed(self): return self.speed[self.game.keyPressed('focus')]
+		rect = self.rect
+		
+		if self.frame < self.delay:
+			self.image.set_alpha(float(self.frame) / self.delay * 255)
+			self.frame += 1
+		else:
+			# calc angle
+			self.angle_vel += self.angle_accel
+			self.angle += self.angle_vel
+			ang = math.radians(self.angle)
+			
+			# calc pos
+			# TODO: figure out what's going wrong here
+			rect.center = (rect.center[0] - math.cos(ang) * self.speed, rect.center[1] - math.sin(ang) * self.speed)
+			
+			# check clip
+			if not self._game.area.bulletClip.collidepoint(self.rect.center):
+				return self.kill()
+			
+			# rotate image
+			if self.angle_vel: self.image = pygame.transform.rotate(self.image, self.angle_vel)
 
 #########
 # enemy #

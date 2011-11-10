@@ -4,18 +4,6 @@
 class base:
 	def tick(self): return (0, 0)
 
-##############
-# continuous #
-##############
-class continuous(base):
-	def __init__(self, pos, speed, angle):
-		self.pos = pos
-		self.speed = speed
-		self.angle = angle
-	
-	def tick(self):
-		pass
-
 ########
 # lerp #
 ########
