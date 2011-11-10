@@ -8,7 +8,7 @@ Properties:
 	delay [num]       - time to fade in with no collision or movement (ticks)
 	dmg [num]         - amount of damage dealt upon hit
 	game [Game]       - reference to game object
-	image [Surface]   - surface for bullet graphic; may be rotated
+	image [Surface]   - surface for bullet graphic (should be pointing down)
 	radius [num]      - radius to use in collision checks
 	rect [Rect]       - position and size of entire bullet
 	speed [num]       - linear velocity (units per tick)

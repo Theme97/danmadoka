@@ -28,7 +28,7 @@ class HomuraBullet(base.bullet):
 	image = None
 	
 	def __init__(self, game, pos):
-		if not HomuraBullet.image: HomuraBullet.image = pygame.image.load('./img/hom-bulleta.png').convert()
+		if not HomuraBullet.image: HomuraBullet.image = pygame.image.load('./img/hom-bulleta.png').convert_alpha()
 		super(HomuraBullet, self).__init__(game, HomuraBullet.image)
 		self.angle = 90
 		self.speed = 10

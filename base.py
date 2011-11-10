@@ -49,7 +49,7 @@ class bullet(pygame.sprite.Sprite):
 				return self.kill()
 			
 			# rotate image
-			if self.angle_vel: self.image = pygame.transform.rotate(self.image, self.angle_vel)
+			self.image = pygame.transform.rotate(self._image, 270 - self.angle)
 
 #########
 # enemy #
