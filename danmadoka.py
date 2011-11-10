@@ -38,9 +38,10 @@ class Game:
 	
 	def update(self):
 		self.area.update()
-		pygame.transform.scale(self.window, self._window.get_size(), self._window)
-		self.ticks += 1
+		scale = pygame.transform.scale if self.system.res[0] <= 800 else pygame.transform.smoothscale
+		scale(self.window, self._window.get_size(), self._window)
 		# TODO: TATE?
+		self.ticks += 1
 
 ##########
 # System #
