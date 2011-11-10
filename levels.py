@@ -9,6 +9,7 @@ class level:
 
 class l1(level):
 	def tick(self, time):
+		if time > 0: return
 		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
 		e.moveCatmullRom([(50, 400), (400, 400)], 300)
 		self.area.enemies.add(e)

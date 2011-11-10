@@ -58,7 +58,6 @@ class catmullRom(base):
 		self.frame  = 0.0
 		self.step   = n / float(frames)
 		self.length = n - self.step
-		print self.points
 	
 	def tick(self):
 		if self.frame >= self.length: return self.points[-2]

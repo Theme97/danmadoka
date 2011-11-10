@@ -38,16 +38,13 @@ class Game:
 		
 		self.ticks = 0
 		
-		area = self.area = PlayArea(self)
+		area = self.area = PlayArea(self, levels.l1)
 		area.setPlayer(players.Homura)
-		
-		level = self.level = levels.l1(area)
-		level.tick(0)
 	
 	def keyPressed(self, key): return self.keys[self.system.keys[key]]
 	
 	def update(self):
-		self.area.update()
+		self.area.tick()
 		scale = pygame.transform.scale if self.system.res[0] <= 800 else pygame.transform.smoothscale
 		scale(self.window, self._window.get_size(), self._window)
 		# TODO: TATE?
@@ -57,9 +54,10 @@ class Game:
 # PlayArea #
 ############
 class PlayArea:
-	def __init__(self, game):
+	def __init__(self, game, level):
 		# private vars
 		self._game = game
+		self._level = level(self)
 		
 		# surfaces
 		self.rect = pygame.Rect(40, 20, 480, 560)
@@ -91,7 +89,7 @@ class PlayArea:
 		self.playerBullets.add(bullet)
 		bullet.Init = True
 	
-	def update(self):
+	def tick(self):
 		# draw bg
 		self._game.window.fill((0, 0, 0)) # fill window bg (stage image goes here)
 		self.surface.fill((255, 255, 255)) # fill playarea bg (uhhh. stuff goes here)
@@ -102,6 +100,9 @@ class PlayArea:
 		self.enemies.update()
 		self.enemyBullets.update()
 		self.enemyBulletQueue.update()
+		
+		# level logic
+		self._level.tick(self._game.ticks)
 		
 		# draw groups
 		self.playerBullets.draw(self.surface)
