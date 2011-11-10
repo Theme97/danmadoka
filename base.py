@@ -9,11 +9,10 @@ class bullet(pygame.sprite.Sprite):
 		super(bullet, self).__init__()
 		self._game  = game
 		self._image = image
+		self._delayed = 0
 		self.image = image
 		
 		# defaults
-		self.init = False
-		
 		self.rect = image.get_rect()
 		self.speed = 0
 		self.accel = 0
@@ -24,7 +23,6 @@ class bullet(pygame.sprite.Sprite):
 		
 		self.dmg = 0
 		self.delay = 0
-		self.frame = 0
 		self.radius = 0
 	
 	def hit(self, victim):
@@ -32,13 +30,9 @@ class bullet(pygame.sprite.Sprite):
 		return self.dmg
 	
 	def update(self):
-		if not self.Init: return
-		
-		rect = self.rect
-		
-		if self.frame < self.delay:
-			self.image.set_alpha(float(self.frame) / self.delay * 255)
-			self.frame += 1
+		if self._delayed < self.delay:
+			self.image.set_alpha(float(self._delayed) / self.delay * 255)
+			self._delayed += 1
 		else:
 			# calc angle
 			self.angle_vel += self.angle_accel
@@ -48,7 +42,7 @@ class bullet(pygame.sprite.Sprite):
 			# calc pos
 			# TODO: speed_limit
 			self.speed += self.accel
-			rect.move_ip(-math.cos(ang) * self.speed, -math.sin(ang) * self.speed)
+			self.rect.move_ip(-math.cos(ang) * self.speed, -math.sin(ang) * self.speed)
 			
 			# check clip
 			if not self._game.area.bulletClip.collidepoint(self.rect.center):
