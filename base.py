@@ -46,8 +46,9 @@ class bullet(pygame.sprite.Sprite):
 			ang = math.radians(self.angle)
 			
 			# calc pos
-			# TODO: figure out what's going wrong here
-			rect.center = (rect.center[0] - math.cos(ang) * self.speed, rect.center[1] - math.sin(ang) * self.speed)
+			# TODO: speed_limit
+			self.speed += self.accel
+			rect.move_ip(-math.cos(ang) * self.speed, -math.sin(ang) * self.speed)
 			
 			# check clip
 			if not self._game.area.bulletClip.collidepoint(self.rect.center):
@@ -113,36 +114,35 @@ class player(pygame.sprite.Sprite):
 		self.radius = 2     # radius (in pixels) of hitbox, always centered
 	
 	def update(self):
-		# move (if applicable)
 		self.move()
-		
-		# shoot (if applicable)
 		if self.game.keyPressed('shoot'): self.shoot()
-		
-		# check collisions
-		# TODO: ... collide
-		for enemy in pygame.sprite.spritecollide(self, self.game.area.enemies, False):
-			print enemy
+		self.checkCollisions()
 	
 	def move(self):
 		game = self.game
+		rect = self.rect
 		x = game.keyPressed('right') - game.keyPressed('left')
 		y = game.keyPressed('down')  - game.keyPressed('up')
 		if x and y:
 			x *= 0.7071
 			y *= 0.7071
 		if x:
-			self.rect.left += x * self.getSpeed()
-			if self.rect.left < 0: self.rect.left = 0
-			if self.rect.right > 480: self.rect.right = 480
+			rect.left += x * self.getSpeed()
+			if rect.left < 0: rect.left = 0
+			if rect.right > 480: rect.right = 480
 		if y:
-			self.rect.top += y * self.getSpeed()
-			if self.rect.top < 0: self.rect.top = 0
-			if self.rect.bottom > 560: self.rect.bottom = 560
+			rect.top += y * self.getSpeed()
+			if rect.top < 0: rect.top = 0
+			if rect.bottom > 560: rect.bottom = 560
 	
 	def shoot(self):
 		# subclass should be implementing this
 		pass
+	
+	def checkCollisions(self):
+		# TODO: ... collide
+		for enemy in pygame.sprite.spritecollide(self, self.game.area.enemies, False):
+			print enemy
 	
 	def setPos(self, pos): self.rect.center = pos
 	def getPos(self): return self.rect.center

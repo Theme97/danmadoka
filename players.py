@@ -9,22 +9,20 @@ class Homura(base.player):
 		self.speed = (5, 2.5)
 		self.nextShot = 0
 	
-	def update(self):
-		super(Homura, self).update()
-		if self.game.keyPressed('shoot'):
-			if self.nextShot <= self.game.ticks:
-				if self.game.keyPressed('focus'):
-					self.nextShot = self.game.ticks + 20
-					bullet = HomuraBullet(self.game, self.getPos())
-					bullet.angle = 105
-					self.game.area.addPlayerBullet(bullet)
-					bullet = HomuraBullet(self.game, self.getPos())
-					bullet.angle = 75
-					self.game.area.addPlayerBullet(bullet)
-				else:
-					self.nextShot = self.game.ticks + 10
-					bullet = HomuraBullet(self.game, self.getPos())
-					self.game.area.addPlayerBullet(bullet)
+	def shoot(self):
+		if self.nextShot <= self.game.ticks:
+			if self.game.keyPressed('focus'):
+				self.nextShot = self.game.ticks + 20
+				bullet = HomuraBullet(self.game, self.getPos())
+				bullet.angle = 105
+				self.game.area.addPlayerBullet(bullet)
+				bullet = HomuraBullet(self.game, self.getPos())
+				bullet.angle = 75
+				self.game.area.addPlayerBullet(bullet)
+			else:
+				self.nextShot = self.game.ticks + 10
+				bullet = HomuraBullet(self.game, self.getPos())
+				self.game.area.addPlayerBullet(bullet)
 
 class HomuraBullet(base.bullet):
 	image = None
