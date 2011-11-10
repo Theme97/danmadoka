@@ -91,6 +91,7 @@ class enemy(pygame.sprite.Sprite):
 	def setPos(self, pos): self.rect.center = pos
 	
 	def moveBezier(self, path, frames): self.motion = motion.bezier([self.getPos()] + path, frames)
+	def moveCatmullRom(self, path, frames): self.motion = motion.catmullRom([self.getPos()] + path, frames)
 	def moveLinear(self, pos, frames): self.motion = motion.lerp(self.getPos(), pos, frames)
 	def moveLinear2(self, pos, frames, weight): self.motion = motion.bezier([self.getPos()] * weight + [pos] * weight, frames)
 

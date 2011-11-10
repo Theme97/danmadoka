@@ -42,13 +42,13 @@ class Game:
 		area.setPlayer(players.Homura)
 		
 		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveBezier([(50, 400), (400, 50), (400, 400)], 600)
+		e.moveCatmullRom([(50, 400), (400, 400)], 300)
 		area.enemies.add(e)
 		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveBezier([(400, 50), (50, 400), (400, 400)], 600)
+		e.moveBezier([(400, 50), (400, 400)], 300)
 		area.enemies.add(e)
 		e = base.enemy(self, (50, 50), 100, './img/enemy1.png')
-		e.moveLinear2((400, 400), 600, 4)
+		e.moveLinear2((400, 400), 300, 4)
 		area.enemies.add(e)
 	
 	def keyPressed(self, key): return self.keys[self.system.keys[key]]

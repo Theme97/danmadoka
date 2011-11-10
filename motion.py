@@ -50,3 +50,28 @@ class bezier(base):
 			return p[0]
 		elif size == 0:
 			return (0, 0)
+
+class catmullRom(base):
+	def __init__(self, points, frames):
+		n = len(points) - 1
+		self.points = [points[0]] + points + [points[-1]]
+		self.frame  = 0.0
+		self.step   = n / float(frames)
+		self.length = n - self.step
+		print self.points
+	
+	def tick(self):
+		if self.frame >= self.length: return self.points[-2]
+		self.frame += self.step
+		s = int(self.frame)
+		return self.calc(self.points[s:s+4], self.frame % 1)
+	
+	@staticmethod
+	def calc(p, t):
+		t2 = t * t
+		t3 = t2 * t
+		m1 = -0.5*t3 +     t2 - 0.5*t
+		m2 =  1.5*t3 - 2.5*t2         + 1.0
+		m3 = -1.5*t3 + 2.0*t2 + 0.5*t
+		m4 =  0.5*t3 - 0.5*t2
+		return (m1*p[0][0] + m2*p[1][0] + m3*p[2][0] + m4*p[3][0], m1*p[0][1] + m2*p[1][1] + m3*p[2][1] + m4*p[3][1])
