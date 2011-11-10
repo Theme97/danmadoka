@@ -51,6 +51,9 @@ class bezier(base):
 		elif size == 0:
 			return (0, 0)
 
+##############
+# catmullRom #
+##############
 class catmullRom(base):
 	def __init__(self, points, frames):
 		n = len(points) - 1
