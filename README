@@ -7,6 +7,7 @@ Properties:
 	angle_vel [num]   - angular velocity (degrees per tick)
 	delay [num]       - time to fade in with no collision or movement (ticks)
 	dmg [num]         - amount of damage dealt upon hit
+	game [Game]       - reference to game object
 	image [Surface]   - surface for bullet graphic; may be rotated
 	radius [num]      - radius to use in collision checks
 	rect [Rect]       - position and size of entire bullet
@@ -23,4 +24,54 @@ Methods:
 	
 	update()
 		does what it says
+		returns: None
+
+---
+
+<base.enemy>
+
+Properties:
+	game [Game]          - reference to game object
+	health [num]         - amount of damage to take before being killed
+	image [Surface]      - graphic for enemy sprite
+	invuln [num / bool]  - num of frames for invincibility; True for permanent
+	motion [base.motion] - current motion path
+	rect [Rect]          - position and size of entire enemy sprite
+
+Methods:
+	__init__([Game] game, [tuple] pos, [num] health, [Surface] image)
+		initializes properties
+		returns: None
+	
+	update()
+		calculates movement, then checks collisions with self.checkCollision()
+		returns: None
+	
+	checkCollision()
+		calls bullet.hit() on any player bullets colliding with self
+		kills self if health is depleted
+		note that this method is not called if invulnerability is enabled
+		returns: None
+	
+	getPos()
+		returns (x, y) of self
+		returns: tuple
+	
+	setPos([tuple] pos)
+		sets (x, y) of self
+		returns: None
+	
+	moveBezier([list] path, [num] frames)
+		sets current motion to bezier curve based on points in `path`
+		motion completes in `frames` frames
+		returns: None
+	
+	moveLinear([tuple] pos, [num] frames)
+		sets current motion to a straight line to `pos`
+		motion completes in `frames` frames
+		returns: None
+	
+	moveLinear2([tuple] pos, [num] frames, [int] weight)
+		sets current motion to smooth line to `pos` based on `weight`
+		motion completes in `frames` frames
 		returns: None
